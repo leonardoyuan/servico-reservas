@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RestauranteInputDTO {
+public class RestauranteInput {
 
     @NotBlank(message = "O nome do restaurante é obrigatório.")
     private String nome;
