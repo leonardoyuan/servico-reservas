@@ -17,6 +17,7 @@ public class Reserva {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "restaurante_id")
     private Restaurante restaurante;
 
     private String nomeCliente;

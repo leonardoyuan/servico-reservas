@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.leoyuan.servicoreservas.api.dto.input.RestauranteInput;
-import com.leoyuan.servicoreservas.domain.model.Restaurante;
+import com.leoyuan.servicoreservas.api.dto.output.RestauranteOutput;
 import com.leoyuan.servicoreservas.domain.service.RestauranteService;
-
-import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,24 +26,25 @@ public class RestauranteController {
     private RestauranteService restauranteService;
 
     @GetMapping("/listar")
-    public List<Restaurante> listarRestaurantes() {
+    public List<RestauranteOutput> listarRestaurantes() {
         return restauranteService.listarRestaurantes();
     }
 
-    @GetMapping("/id")
-    public Optional<Restaurante> listarRestaurantePorId(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public Optional<RestauranteOutput> listarRestaurantePorId(@PathVariable Long id) {
         return restauranteService.buscarRestaurantePorId(id);
 
     }
 
     @PostMapping("/criar")
-    public Restaurante criarRestaurante(@RequestBody Restaurante restaurante) {
-        return restauranteService.salvarRestaurante(restaurante);
+    public RestauranteOutput criarRestaurante(@RequestBody RestauranteInput restauranteInput) {
+        return restauranteService.salvarRestaurante(restauranteInput);
     }
 
     @PutMapping("/{id}")
-    public Restaurante atualizarRestaurante(@PathVariable Long id, @RequestBody Restaurante restaurante) {
-        return restauranteService.atualizarDadosDoRestaurante(id, restaurante);
+    public RestauranteOutput atualizarRestaurante(@PathVariable Long id,
+            @RequestBody RestauranteInput restauranteInput) {
+        return restauranteService.atualizarDadosDoRestaurante(id, restauranteInput);
     }
 
     @DeleteMapping("/{id}")

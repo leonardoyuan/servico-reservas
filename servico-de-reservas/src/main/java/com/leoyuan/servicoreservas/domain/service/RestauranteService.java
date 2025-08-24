@@ -1,14 +1,14 @@
 package com.leoyuan.servicoreservas.domain.service;
 
-import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
+import com.leoyuan.servicoreservas.api.dto.input.RestauranteInput;
+import com.leoyuan.servicoreservas.api.dto.output.RestauranteOutput;
+import com.leoyuan.servicoreservas.api.mapper.RestauranteMapper;
 import com.leoyuan.servicoreservas.domain.model.Restaurante;
 import com.leoyuan.servicoreservas.domain.repository.RestauranteRepository;
 
@@ -20,19 +20,27 @@ public class RestauranteService {
     @Autowired
     private RestauranteRepository restauranteRepository;
 
-    public List<Restaurante> listarRestaurantes() {
-        return restauranteRepository.findAll();
+    @Autowired
+    private RestauranteMapper restauranteMapper;
+
+    public List<RestauranteOutput> listarRestaurantes() {
+        return restauranteRepository.findAll()
+                .stream()
+                .map(restauranteMapper::toOutput).toList();
     }
 
-    public Optional<Restaurante> buscarRestaurantePorId(Long id) {
-        return restauranteRepository.findById(id);
+    public Optional<RestauranteOutput> buscarRestaurantePorId(Long id) {
+        return restauranteRepository.findById(id).map(restauranteMapper::toOutput);
     }
 
-    public Restaurante salvarRestaurante(Restaurante restaurante) {
-        return restauranteRepository.save(restaurante);
+    public RestauranteOutput salvarRestaurante(RestauranteInput restauranteInput) {
+        Restaurante restaurante = restauranteMapper.toEntity(restauranteInput);
+        Restaurante novo = restauranteRepository.save(restaurante);
+
+        return restauranteMapper.toOutput(novo);
     }
 
-    public Restaurante atualizarDadosDoRestaurante(Long id, Restaurante dadosAtualizados) {
+    public RestauranteOutput atualizarDadosDoRestaurante(Long id, RestauranteInput dadosAtualizados) {
         Restaurante restaurante = restauranteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Esse restaurante nao existe"));
 
@@ -40,8 +48,9 @@ public class RestauranteService {
         restaurante.setEndereco(dadosAtualizados.getEndereco());
         restaurante.setTelefone(dadosAtualizados.getTelefone());
 
-        return restauranteRepository.save(restaurante);
+        Restaurante atualizado = restauranteRepository.save(restaurante);
 
+        return restauranteMapper.toOutput(atualizado);
     }
 
     public void deletarRestaurante(Long id) {
